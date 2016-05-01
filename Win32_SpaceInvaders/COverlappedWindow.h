@@ -14,6 +14,7 @@ public:
 protected:
 	void OnCreate(HWND handle);
 	void OnSize();
+	void OnDraw();
 	void OnDestroy();
 private:
 	HWND handle;
