@@ -4,12 +4,10 @@
 
 int initialize(COverlappedWindow *cWindow, const HINSTANCE& instance, int cmdShow)
 {
-	if (!cWindow->RegisterClass(instance))
-	{
+	if (!cWindow->RegisterClass(instance)) {
 		return -1;
 	}
-	if (!cWindow->Create(instance))
-	{
+	if (!cWindow->Create(instance)) {
 		return -1;
 	}
 	cWindow->Show(cmdShow);
