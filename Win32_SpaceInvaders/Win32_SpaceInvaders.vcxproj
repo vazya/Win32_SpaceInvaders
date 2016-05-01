@@ -148,9 +148,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="COverlappedWindow.cpp" />
+    <ClCompile Include="PainterClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="COverlappedWindow.h" />
+    <ClInclude Include="PainterClass.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

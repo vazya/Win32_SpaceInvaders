@@ -1,3 +1,4 @@
+#include "PainterClass.h"
 #include <Windows.h>
 
 class COverlappedWindow {
@@ -12,6 +13,7 @@ public:
 protected:
 	void OnCreate(HWND handle);
 	void OnSize();
+	void OnDraw2();
 	void OnDraw();
 	void OnTimer();
 	void OnDestroy();
@@ -19,6 +21,9 @@ protected:
 private:
 	HWND handle;
 	HINSTANCE hInst;
+
+	PainterClass painter;
+
 	int x;
 	int y;
 	int dx;

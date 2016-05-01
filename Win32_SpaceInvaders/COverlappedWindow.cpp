@@ -67,10 +67,10 @@ bool COverlappedWindow::Create(HINSTANCE instance) {
 		L"COverlappedWindow",
 		L"Task2",
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
+		100,
+		100,
+		1000,
+		600,
 		0,
 		0,
 		instance,
@@ -109,10 +109,11 @@ void COverlappedWindow::OnTimer() {
 	::InvalidateRect(handle, &rect, 0);
 }
 
-void COverlappedWindow::OnDraw() {
+void COverlappedWindow::OnDraw2() {
+
 	int diam = 500;
 	POINT center = POINT();
-	center.x = x + dx;; center.y = y + dy;
+	center.x = 500; center.y = 250;
 	POINT top_left_corner;
 	top_left_corner.x = center.x - diam / 2;
 	top_left_corner.y = center.y - diam / 2;
@@ -132,15 +133,9 @@ void COverlappedWindow::OnDraw() {
 	HPEN whitePen = ::CreatePen(PS_SOLID, 0, RGB(255, 255, 255));
 	::SelectObject(memDC, whitePen);
 	::Rectangle(memDC, 0, 0, width, height);
-
-	HBRUSH mybrush = ::CreateSolidBrush(RGB(255, 0, 0));
-	int m = rand() % 3;
-	if (m == 0)
-		mybrush = ::CreateSolidBrush(RGB(255, 0, 0));
-	if (m == 1)
-		mybrush = ::CreateSolidBrush(RGB(0, 255, 0));
-	if (m == 2)
-		mybrush = ::CreateSolidBrush(RGB(0, 0, 255));
+	
+	int r = rand() % 256; int g = rand() % 256; int b = rand() % 256;
+	HBRUSH mybrush = ::CreateSolidBrush(RGB(r, g, b));
 
 	::SelectObject(memDC, mybrush);
 	::Ellipse(memDC, top_left_corner.x, top_left_corner.y, top_left_corner.x + diam, top_left_corner.y + diam);
@@ -156,4 +151,8 @@ void COverlappedWindow::OnDraw() {
 	::DeleteDC(dc);
 	::DeleteDC(memDC);
 	::EndPaint(handle, &ps);
+}
+
+void COverlappedWindow::OnDraw() {
+	painter.Draw(handle);
 }
