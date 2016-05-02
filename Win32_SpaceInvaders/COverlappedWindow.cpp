@@ -30,16 +30,18 @@ LRESULT __stdcall COverlappedWindow::windowProc(HWND handle, UINT message, WPARA
 		case WM_TIMER: {
 			window->OnTimer();
 		}
+///*
 		case WM_SIZE: {
 			window->OnSize();
 			break;
 		}
+//*/
 		case WM_DESTROY: {
 			window->OnDestroy();
 			break;
 		}
 		default:
-			break;
+			return DefWindowProc(handle, message, wParam, lParam);
 		}
 	}
 
@@ -52,6 +54,8 @@ bool COverlappedWindow::RegisterClass(HINSTANCE instance) {
 	::ZeroMemory(&windowClass, sizeof(windowClass));
 	windowClass.cbSize = sizeof(WNDCLASSEX);
 	windowClass.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+
+//	windowClass.style = WS_DLGFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZE;
 	windowClass.lpfnWndProc = COverlappedWindow::windowProc;
 	windowClass.hInstance = instance;
 	windowClass.lpszClassName = L"COverlappedWindow";
@@ -80,12 +84,13 @@ bool COverlappedWindow::Create(HINSTANCE instance) {
 	return COverlappedWindow::handle != 0;
 }
 
-
 void COverlappedWindow::OnCreate(HWND handle) {
 	RECT rect;
 	::GetClientRect(handle, &rect);
+	painter.Init(handle);
 }
 
+///*
 void COverlappedWindow::OnSize() {
 	HDC hDC = GetDC(handle);
 	RECT rect;
@@ -94,6 +99,7 @@ void COverlappedWindow::OnSize() {
 	::ReleaseDC(handle, hDC);
 	DeleteObject(hDC);
 }
+//*/
 
 void COverlappedWindow::OnDestroy() {
 	::PostQuitMessage(0);
@@ -112,9 +118,9 @@ void COverlappedWindow::OnTimer() {
 void COverlappedWindow::OnDraw2() {
 
 	int diam = 500;
-	POINT center = POINT();
+	Point center = Point();
 	center.x = 500; center.y = 250;
-	POINT top_left_corner;
+	Point top_left_corner;
 	top_left_corner.x = center.x - diam / 2;
 	top_left_corner.y = center.y - diam / 2;
 
@@ -154,5 +160,5 @@ void COverlappedWindow::OnDraw2() {
 }
 
 void COverlappedWindow::OnDraw() {
-	painter.Draw(handle);
+	painter.Draw();
 }

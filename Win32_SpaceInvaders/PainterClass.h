@@ -3,15 +3,32 @@
 #include <vector>
 using namespace std;
 
-struct point {
+struct Point {
 	int x;
 	int y;
+	Point() : x(0), y(0) {};
+	Point(int _x, int _y) : x(_x), y(_y) {};
+};
+
+struct UnitProperties {
+	int unitWidth;
+	int unitHeight;
+
 };
 
 class PainterClass {
 public:
-	void Draw(HWND handle);
+	void Init(HWND handle);
+	void Draw();
+	void DrawTestUnit(HDC memDC, int xPos, int yPos);
+
 private:
-	vector <point> v;
-	vector <bool> liveOrDead;
+	HWND handle;
+	int width;
+	int height;
+	Point topLeft;
+
+	UnitProperties unitProp;
+	vector <Point> v;
+	vector <int> liveOrDead;
 };
