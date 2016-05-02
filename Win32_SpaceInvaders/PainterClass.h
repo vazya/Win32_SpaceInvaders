@@ -24,6 +24,8 @@ public:
 	void SetWidth(int newWidth);
 	void SetHeight(int newHeight);
 	void SetLeftTop(int left, int top);
+	void InitMatrix();
+	void DrawMatrix(HDC memDC);
 
 private:
 	HWND handle;
@@ -32,6 +34,6 @@ private:
 	Point LeftTop;
 
 	UnitProperties unitProp;
-	vector <Point> v;
-	vector <int> liveOrDead;
+	vector < vector <Point> > v;
+	vector < vector<int> > liveOrDead;
 };

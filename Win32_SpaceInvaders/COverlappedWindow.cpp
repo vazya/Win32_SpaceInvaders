@@ -30,12 +30,10 @@ LRESULT __stdcall COverlappedWindow::windowProc(HWND handle, UINT message, WPARA
 		case WM_TIMER: {
 			window->OnTimer();
 		}
-///*
 		case WM_SIZE: {
 			window->OnSize();
 			break;
 		}
-//*/
 		case WM_DESTROY: {
 			window->OnDestroy();
 			break;
@@ -97,6 +95,7 @@ void COverlappedWindow::OnSize() {
 	painter.SetWidth(rect.right - rect.left);
 	painter.SetHeight(rect.bottom - rect.top);
 	painter.SetLeftTop(rect.left, rect.top);
+	painter.InitMatrix();
 
 	::ReleaseDC(handle, hDC);
 	DeleteObject(hDC);
