@@ -21,12 +21,15 @@ public:
 	void Init(HWND handle);
 	void Draw();
 	void DrawTestUnit(HDC memDC, int xPos, int yPos);
+	void SetWidth(int newWidth);
+	void SetHeight(int newHeight);
+	void SetLeftTop(int left, int top);
 
 private:
 	HWND handle;
 	int width;
 	int height;
-	Point topLeft;
+	Point LeftTop;
 
 	UnitProperties unitProp;
 	vector <Point> v;

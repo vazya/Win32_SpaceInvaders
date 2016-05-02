@@ -54,8 +54,6 @@ bool COverlappedWindow::RegisterClass(HINSTANCE instance) {
 	::ZeroMemory(&windowClass, sizeof(windowClass));
 	windowClass.cbSize = sizeof(WNDCLASSEX);
 	windowClass.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
-
-//	windowClass.style = WS_DLGFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZE;
 	windowClass.lpfnWndProc = COverlappedWindow::windowProc;
 	windowClass.hInstance = instance;
 	windowClass.lpszClassName = L"COverlappedWindow";
@@ -71,8 +69,8 @@ bool COverlappedWindow::Create(HINSTANCE instance) {
 		L"COverlappedWindow",
 		L"Task2",
 		WS_OVERLAPPEDWINDOW,
-		100,
-		100,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
 		1000,
 		600,
 		0,
@@ -95,6 +93,10 @@ void COverlappedWindow::OnSize() {
 	HDC hDC = GetDC(handle);
 	RECT rect;
 	::GetClientRect(handle, &rect);
+	
+	painter.SetWidth(rect.right - rect.left);
+	painter.SetHeight(rect.bottom - rect.top);
+	painter.SetLeftTop(rect.left, rect.top);
 
 	::ReleaseDC(handle, hDC);
 	DeleteObject(hDC);

@@ -6,11 +6,24 @@ void PainterClass::Init(HWND _handle) {
 	handle = _handle;
 	RECT rect;
 	::GetClientRect(handle, &rect);
-	topLeft = Point(rect.left, rect.top);
-	width = rect.right - rect.left;
-	height = rect.bottom - rect.top;
+//	LeftTop = Point(rect.left, rect.top);
+//	width = rect.right - rect.left;
+//	height = rect.bottom - rect.top;
 	unitProp.unitWidth = 50; // тут захардкоженные размеры объектов
 	unitProp.unitHeight = 50; // тут захардкоженные размеры объектов
+}
+
+void PainterClass::SetWidth(int newWidth) {
+	width = newWidth;
+}
+
+void PainterClass::SetHeight(int newHeight) {
+	height = newHeight;
+}
+
+void PainterClass::SetLeftTop(int left, int top) {
+	LeftTop.x = left;
+	LeftTop.y = top;
 }
 
 void PainterClass::Draw() {
@@ -21,9 +34,9 @@ void PainterClass::Draw() {
 	HBITMAP memBitmap = ::CreateCompatibleBitmap(dc, width, height);
 	HGDIOBJ oldBitmap = ::SelectObject(memDC, memBitmap);
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 10; j++) {
-			DrawTestUnit(memDC, topLeft.x + 2*i*unitProp.unitWidth, topLeft.y + 2*j*unitProp.unitWidth);
+			DrawTestUnit(memDC, LeftTop.x + 2*i*unitProp.unitWidth, LeftTop.y + 2*j*unitProp.unitWidth);
 		}
 	}
 	
