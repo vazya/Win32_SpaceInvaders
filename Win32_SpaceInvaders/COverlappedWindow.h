@@ -13,7 +13,6 @@ public:
 protected:
 	void OnCreate(HWND handle);
 	void OnSize();
-	void OnDraw2();
 	void OnDraw();
 	void OnTimer();
 	void OnDestroy();
@@ -24,9 +23,5 @@ private:
 
 	PainterClass painter;
 
-	int x;
-	int y;
-	int dx;
-	int dy;
 	static LRESULT __stdcall windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 };

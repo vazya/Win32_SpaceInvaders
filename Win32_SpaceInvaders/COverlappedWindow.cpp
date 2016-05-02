@@ -63,19 +63,9 @@ bool COverlappedWindow::RegisterClass(HINSTANCE instance) {
 bool COverlappedWindow::Create(HINSTANCE instance) {
 	hInst = instance;
 
-	COverlappedWindow::handle = ::CreateWindowEx(0,
-		L"COverlappedWindow",
-		L"Task2",
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		1000,
-		600,
-		0,
-		0,
-		instance,
-		this);
-	x = 500; y = 250; dx = 5; dy = 5;
+	COverlappedWindow::handle = ::CreateWindowEx(0, L"COverlappedWindow", L"GALAXIAN",
+		WS_OVERLAPPEDWINDOW, 100, 100, 1000, 600, 0, 0, instance, this);
+
 	::SetTimer(handle, 1, 1, NULL);
 	return COverlappedWindow::handle != 0;
 }
@@ -86,7 +76,6 @@ void COverlappedWindow::OnCreate(HWND handle) {
 	painter.Init(handle);
 }
 
-///*
 void COverlappedWindow::OnSize() {
 	HDC hDC = GetDC(handle);
 	RECT rect;
@@ -94,13 +83,13 @@ void COverlappedWindow::OnSize() {
 	
 	painter.SetWidth(rect.right - rect.left);
 	painter.SetHeight(rect.bottom - rect.top);
-	painter.SetLeftTop(rect.left, rect.top);
+	painter.SetLeft(rect.left);
+	painter.SetTop(rect.top);
 	painter.InitMatrix();
 
 	::ReleaseDC(handle, hDC);
 	DeleteObject(hDC);
 }
-//*/
 
 void COverlappedWindow::OnDestroy() {
 	::PostQuitMessage(0);
@@ -114,50 +103,6 @@ void COverlappedWindow::OnTimer() {
 	RECT rect;
 	::GetClientRect(handle, &rect);
 	::InvalidateRect(handle, &rect, 0);
-}
-
-void COverlappedWindow::OnDraw2() {
-
-	int diam = 500;
-	Point center = Point();
-	center.x = 500; center.y = 250;
-	Point top_left_corner;
-	top_left_corner.x = center.x - diam / 2;
-	top_left_corner.y = center.y - diam / 2;
-
-	PAINTSTRUCT ps;
-	HDC dc = ::BeginPaint(handle, &ps);
-	HDC memDC = ::CreateCompatibleDC(dc);
-
-	RECT rect;
-	::GetClientRect(handle, &rect);
-	int width = rect.right - rect.left;
-	int height = rect.bottom - rect.top;
-
-	HBITMAP memBitmap = ::CreateCompatibleBitmap(dc, width, height);
-	HGDIOBJ oldBitmap = ::SelectObject(memDC, memBitmap);
-
-	HPEN whitePen = ::CreatePen(PS_SOLID, 0, RGB(255, 255, 255));
-	::SelectObject(memDC, whitePen);
-	::Rectangle(memDC, 0, 0, width, height);
-	
-	int r = rand() % 256; int g = rand() % 256; int b = rand() % 256;
-	HBRUSH mybrush = ::CreateSolidBrush(RGB(r, g, b));
-
-	::SelectObject(memDC, mybrush);
-	::Ellipse(memDC, top_left_corner.x, top_left_corner.y, top_left_corner.x + diam, top_left_corner.y + diam);
-
-	::DeleteObject(mybrush);
-	::DeleteObject(whitePen);
-
-	::DeleteObject(memBitmap);
-	::DeleteObject(oldBitmap);
-
-	::BitBlt(dc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
-
-	::DeleteDC(dc);
-	::DeleteDC(memDC);
-	::EndPaint(handle, &ps);
 }
 
 void COverlappedWindow::OnDraw() {
