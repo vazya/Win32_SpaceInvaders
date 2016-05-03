@@ -3,13 +3,6 @@
 #include <vector>
 using namespace std;
 
-struct Point {
-	int x;
-	int y;
-	Point() : x(0), y(0) {};
-	Point(int _x, int _y) : x(_x), y(_y) {};
-};
-
 struct UnitProperties {
 	int unitWidth;
 	int unitHeight;
@@ -31,6 +24,7 @@ struct Unit {
 
 struct MatrixProperties {
 	int left;
+	int right;
 	int top;
 
 	int leftShift;
@@ -42,6 +36,8 @@ struct MatrixProperties {
 
 	int curTime;
 	int maxTime;
+
+	int matrixMove;
 };
 
 class PainterClass {
@@ -52,23 +48,42 @@ public:
 	void SetWidth(int newWidth);
 	void SetHeight(int newHeight);
 	void SetLeft(int newLeft);
+	void SetRight(int newRight);
 	void SetTop(int newTop);
 	void InitMatrix();
 	void DrawMatrix(HDC memDC);
-	void Move();
+	void MoveMatrix();
+	void OnTime();
 
 private:
 	HWND handle;
 
-	// для всего этого дерьма потом создам структуру
 	int width;					// свойства клиентской области игры
 	int height;					// свойства клиентской области игры
+
+/*
+	int _left;
+	int _rigth;
+	int _top;
+
+	int _leftShift;
+	int _rightShift;
+	int _topShift;
+	int _botShift;
+	int _hWidth;
+	int _hHeight;
+
+	int _matrixMove;
+
+	int _maxTime;
+*/
+
+//	int matrixCurTime;
+	int curTime;
 
 	MatrixProperties matrixProp;
 
 	UnitProperties unitProp;	// здесь храним свойства злых инвейдеров 
 								// т.к. они одинаковые и их много
 	vector < vector <Unit> > v;	// сами инвейдеры и их состояние и позиция
-
-
 };

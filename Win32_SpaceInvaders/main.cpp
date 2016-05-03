@@ -2,8 +2,7 @@
 #include "COverlappedWindow.h"
 #include <iostream>
 
-int initialize(COverlappedWindow *cWindow, const HINSTANCE& instance, int cmdShow)
-{
+int initialize(COverlappedWindow *cWindow, const HINSTANCE& instance, int cmdShow) {
 	if (!cWindow->RegisterClass(instance)) {
 		return -1;
 	}
@@ -15,8 +14,7 @@ int initialize(COverlappedWindow *cWindow, const HINSTANCE& instance, int cmdSho
 	return 0;
 }
 
-int startLoop()
-{
+int startLoop() {
 	MSG msg;
 	BOOL msgResult = 0;
 	while ((msgResult = ::GetMessage(&msg, 0, 0, 0)) != 0) {
@@ -30,12 +28,7 @@ int startLoop()
 	return 0;
 }
 
-int WINAPI wWinMain(
-	HINSTANCE instance,
-	HINSTANCE prevInstance,
-	LPWSTR commandLine,
-	int cmdShow)
-{
+int WINAPI wWinMain( HINSTANCE instance, HINSTANCE prevInstance, LPWSTR commandLine, int cmdShow) {
 	COverlappedWindow cWindow;
 	int init_status = initialize(&cWindow, instance, cmdShow);
 	if (init_status != 0) {

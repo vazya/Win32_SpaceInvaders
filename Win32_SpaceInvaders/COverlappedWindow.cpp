@@ -12,7 +12,6 @@ LRESULT __stdcall COverlappedWindow::windowProc(HWND handle, UINT message, WPARA
 	if (message == WM_ERASEBKGND) {
 		return true;
 	}
-
 	if (message == WM_NCCREATE) {
 		COverlappedWindow* window = reinterpret_cast<COverlappedWindow*>(reinterpret_cast<CREATESTRUCT*>(lParam)->lpCreateParams);
 		::SetWindowLongPtr(handle, GWLP_USERDATA, reinterpret_cast<LONG>(window));
@@ -29,6 +28,7 @@ LRESULT __stdcall COverlappedWindow::windowProc(HWND handle, UINT message, WPARA
 		}
 		case WM_TIMER: {
 			window->OnTimer();
+			break;
 		}
 		case WM_SIZE: {
 			window->OnSize();
@@ -66,7 +66,7 @@ bool COverlappedWindow::Create(HINSTANCE instance) {
 	COverlappedWindow::handle = ::CreateWindowEx(0, L"COverlappedWindow", L"GALAXIAN",
 		WS_OVERLAPPEDWINDOW, 100, 100, 1000, 600, 0, 0, instance, this);
 
-	::SetTimer(handle, 1, 1, NULL);
+	::SetTimer(handle, 0, 1, NULL);
 	return COverlappedWindow::handle != 0;
 }
 
@@ -81,10 +81,6 @@ void COverlappedWindow::OnSize() {
 	RECT rect;
 	::GetClientRect(handle, &rect);
 	
-	painter.SetWidth(rect.right - rect.left);
-	painter.SetHeight(rect.bottom - rect.top);
-	painter.SetLeft(rect.left);
-	painter.SetTop(rect.top);
 	painter.InitMatrix();
 
 	::ReleaseDC(handle, hDC);
@@ -92,6 +88,7 @@ void COverlappedWindow::OnSize() {
 }
 
 void COverlappedWindow::OnDestroy() {
+	KillTimer(handle, 0);
 	::PostQuitMessage(0);
 }
 
@@ -100,6 +97,7 @@ void COverlappedWindow::Show(int cmdShow) {
 }
 
 void COverlappedWindow::OnTimer() {
+	painter.OnTime();
 	RECT rect;
 	::GetClientRect(handle, &rect);
 	::InvalidateRect(handle, &rect, 0);
