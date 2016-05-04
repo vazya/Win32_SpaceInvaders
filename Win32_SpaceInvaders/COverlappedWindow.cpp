@@ -42,7 +42,6 @@ LRESULT __stdcall COverlappedWindow::windowProc(HWND handle, UINT message, WPARA
 			return DefWindowProc(handle, message, wParam, lParam);
 		}
 	}
-
 	return DefWindowProc(handle, message, wParam, lParam);
 }
 
@@ -64,8 +63,8 @@ bool COverlappedWindow::Create(HINSTANCE instance) {
 	hInst = instance;
 
 	COverlappedWindow::handle = ::CreateWindowEx(0, L"COverlappedWindow", L"GALAXIAN",
-		WS_OVERLAPPEDWINDOW, 100, 100, 1000, 600, 0, 0, instance, this);
-
+		WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME, 100, 100, 1000, 600, 0, 0, instance, this);
+	// запрещаю менять размер окна т.к. это не имеет смысла для нашей игры
 	::SetTimer(handle, 0, 1, NULL);
 	return COverlappedWindow::handle != 0;
 }
@@ -81,7 +80,7 @@ void COverlappedWindow::OnSize() {
 	RECT rect;
 	::GetClientRect(handle, &rect);
 	
-	painter.InitMatrix();
+	painter.OnSize();
 
 	::ReleaseDC(handle, hDC);
 	DeleteObject(hDC);

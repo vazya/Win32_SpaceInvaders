@@ -4,8 +4,7 @@
 void PainterClass::Init(HWND _handle) {
 	handle = _handle;
 	curTime = 0;
-//	matrixCurTime = 0;
-//	_maxTime = 2;
+
 	InitMatrix();
 }
 
@@ -34,17 +33,15 @@ void PainterClass::InitMatrix() {
 	::GetClientRect(handle, &rect);
 	// тут мы захардкодим границы нашей матрицы
 
-	SetWidth(rect.right - rect.left);
-	SetHeight(rect.bottom - rect.top);
+	int left = rect.left;
+	int right = rect.right;
+	int top = rect.top;
+	int bot = rect.bottom;
 
-	matrixProp.top = rect.top;
-	int lShift = matrixProp.leftShift = (int)(0.1*(double)(width));
-	int rShift = matrixProp.rightShift = (int)(0.9*(double)(width));
-
-	int left = matrixProp.left = (int)(0.15*(double)(width));
-	int right = matrixProp.right = (int)(0.65*(double)(width));
-	int top = matrixProp.topShift = (int)(0.1*(double)(height));
-	int bot = matrixProp.botShift = (int)(0.5*(double)(height));
+	int width = right - left;
+	int height = bot - top;
+	SetWidth(width);
+	SetHeight(height);
 
 	int m = 5;										// количество строк
 	v.resize(m);
@@ -53,21 +50,83 @@ void PainterClass::InitMatrix() {
 		v[i].resize(n);
 	}
 
-	int hWidth = matrixProp.hWidth = int((double)(right - left) / (2 * n));
-	int hHeight = matrixProp.hHeight = int((double)(bot - top) / (2 * m));
-	unitProp.unitWidth = hWidth;
-	unitProp.unitHeight = hHeight;
-	int matrixMove = matrixProp.matrixMove = (int)(0.5*(double)(hWidth));
+	matrixProp.top = matrixProp.topShift = top + (int)(0.1*(double)(height));
+	matrixProp.botShift = top + (int)(0.5*(double)(height));
+	int hHeight = matrixProp.hHeight = int((double)(matrixProp.botShift - matrixProp.topShift) / (2 * m));
+
+	matrixProp.leftShift = left + (int)(0.1*(double)(width));
+	matrixProp.rightShift = left + (int)(1.01*(double)(width));
+//	matrixProp.rightShift = left + (int)(0.95*(double)(width));
+	int length = matrixProp.length = (int)(0.7*(double)(matrixProp.rightShift - matrixProp.leftShift));
+
+	matrixProp.left = matrixProp.leftShift + (int)(0.2*(double)(length));
+	matrixProp.right = matrixProp.left + length;
+	int hWidth = matrixProp.hWidth = int((double)(length) / (2 * n));
+	int matrixMove = matrixProp.matrixMove = (int)(0.75*(double)(matrixProp.hWidth));
 
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
-			v[i][j] = Unit(left + j*(hWidth + matrixMove), top + 2*i*hHeight, 1);
+			v[i][j] = Unit(j*(hWidth + matrixMove),2*i*hHeight, 1);
 		}
 	}
-	unitProp.unitWidth = hWidth;
-	unitProp.unitHeight = hHeight;
-	
-	matrixProp.maxTime = 2;
+
+	unitProp.unitWidth = matrixProp.hWidth;
+	unitProp.unitHeight = matrixProp.hHeight;
+
+	matrixProp.maxTime = 50;
+}
+
+void PainterClass::OnSize() {
+	RECT rect;
+	::GetClientRect(handle, &rect);
+	// тут мы захардкодим границы нашей матрицы
+
+	int left = rect.left;
+	int right = rect.right;
+	int top = rect.top;
+	int bot = rect.bottom;
+
+	int width = right - left;
+	int height = bot - top;
+	SetWidth(width);
+	SetHeight(height);
+
+	int m = v.size();										// количество строк
+	int n = v[0].size();									// количество столбцов
+
+	matrixProp.top = matrixProp.topShift = top + (int)(0.1*(double)(height));
+	matrixProp.botShift = top + (int)(0.5*(double)(height));
+	int hHeight = matrixProp.hHeight = int((double)(matrixProp.botShift - matrixProp.topShift) / (2 * m));
+
+	matrixProp.leftShift = left + (int)(0.1*(double)(width));
+	matrixProp.rightShift = left + (int)(1.01*(double)(width));
+	//	matrixProp.rightShift = left + (int)(0.95*(double)(width));
+	int length = matrixProp.length = (int)(0.7*(double)(matrixProp.rightShift - matrixProp.leftShift));
+
+	if (matrixProp.right >= matrixProp.rightShift) {
+		matrixProp.left = matrixProp.rightShift - length;
+		matrixProp.matrixMove = -abs(matrixProp.matrixMove);
+		matrixProp.right = matrixProp.left;
+	}
+
+	if (matrixProp.left <= matrixProp.leftShift) {
+		matrixProp.left = matrixProp.leftShift;
+		matrixProp.matrixMove = abs(matrixProp.matrixMove);
+		matrixProp.right = matrixProp.left + length;
+	}
+
+	matrixProp.right = matrixProp.left + length;
+	int hWidth = matrixProp.hWidth = int((double)(length) / (2 * n));
+	int matrixMove = matrixProp.matrixMove = (int)(0.75*(double)(matrixProp.hWidth));
+
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			v[i][j] = Unit(j*(hWidth + matrixMove), 2 * i*hHeight, 1);
+		}
+	}
+
+	unitProp.unitWidth = matrixProp.hWidth;
+	unitProp.unitHeight = matrixProp.hHeight;
 }
 
 
@@ -106,7 +165,6 @@ void PainterClass::DrawMatrix(HDC memDC) {
 		for (int j = 0; j < v[i].size(); j++) {
 			if (v[i][j].status == 1) {
 				DrawTestUnit(memDC, matrixProp.left + v[i][j].xPos, matrixProp.top + v[i][j].yPos);
-//				DrawTestUnit(memDC, _left + v[i][j].xPos, _top + v[i][j].yPos);
 			}
 		}
 	}
@@ -114,36 +172,19 @@ void PainterClass::DrawMatrix(HDC memDC) {
 
 void PainterClass::MoveMatrix() {
 	if (matrixProp.curTime >= matrixProp.maxTime) {
-		if (matrixProp.right >= matrixProp.rightShift) {
+		if (matrixProp.right >= matrixProp.rightShift) {// + abs(matrixProp.matrixMove)) {
 			matrixProp.matrixMove = -matrixProp.matrixMove;
 		}
-		if (matrixProp.left <= matrixProp.leftShift - abs(matrixProp.matrixMove)) {
+		if (matrixProp.left <= matrixProp.leftShift) { // - abs(matrixProp.matrixMove)) {
 			matrixProp.matrixMove = -matrixProp.matrixMove;
 		}
 
 		matrixProp.left += matrixProp.matrixMove;
 		matrixProp.right += matrixProp.matrixMove;
 		matrixProp.curTime = 0;
-		matrixProp.maxTime = 2; // 50 + (rand() % 45);			// еще немного захардкодим время движения матрицы
+		matrixProp.maxTime = 50 + (rand() % 45);			// еще немного захардкодим время движения матрицы
 	}
 }
-
-/*
-void PainterClass::MoveMatrix2() {
-	if (matrixCurTime >= _maxTime) {
-		if (_left >= _rightShift) {
-			_matrixMove = -_matrixMove;
-		}
-		if (_left < _leftShift) {
-			_matrixMove = -_matrixMove;
-		}
-
-		_left += _matrixMove;
-		matrixCurTime = 0;
-		_maxTime = 2; // 50 + (rand() % 45);			// еще немного захардкодим время движения матрицы
-	}
-}
-//*/
 
 void PainterClass::OnTime() {
 	matrixProp.curTime++;

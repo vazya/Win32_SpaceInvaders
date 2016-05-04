@@ -33,6 +33,7 @@ struct MatrixProperties {
 	int botShift;
 	int hWidth;
 	int hHeight;
+	int length;
 
 	int curTime;
 	int maxTime;
@@ -54,6 +55,7 @@ public:
 	void DrawMatrix(HDC memDC);
 	void MoveMatrix();
 	void OnTime();
+	void OnSize();
 
 private:
 	HWND handle;
@@ -61,24 +63,6 @@ private:
 	int width;					// свойства клиентской области игры
 	int height;					// свойства клиентской области игры
 
-/*
-	int _left;
-	int _rigth;
-	int _top;
-
-	int _leftShift;
-	int _rightShift;
-	int _topShift;
-	int _botShift;
-	int _hWidth;
-	int _hHeight;
-
-	int _matrixMove;
-
-	int _maxTime;
-*/
-
-//	int matrixCurTime;
 	int curTime;
 
 	MatrixProperties matrixProp;
