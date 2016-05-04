@@ -72,7 +72,6 @@ void PainterClass::InitMatrix() {
 
 	unitProp.unitWidth = matrixProp.hWidth;
 	unitProp.unitHeight = matrixProp.hHeight;
-
 	matrixProp.maxTime = 50;
 }
 
