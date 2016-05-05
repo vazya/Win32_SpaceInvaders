@@ -30,6 +30,36 @@ LRESULT __stdcall COverlappedWindow::windowProc(HWND handle, UINT message, WPARA
 			window->OnTimer();
 			break;
 		}
+		case WM_KEYDOWN: {
+			switch (wParam) {
+			case VK_LEFT: {
+				window->painter.SetLeftMove();
+			}
+			break;
+			case VK_RIGHT: {
+				window->painter.SetRightMove();
+			}
+			break;
+			case VK_SPACE: {
+				window->painter.SetShipShoot(true);
+			}
+			break;
+			}
+			break;
+		}
+		case WM_KEYUP: {
+			switch (wParam) {
+			case VK_LEFT: {
+				window->painter.SetStopMove();
+			}
+			break;
+			case VK_RIGHT: {
+				window->painter.SetStopMove();
+			}
+			break;
+			}
+			break;
+		}
 		case WM_SIZE: {
 			window->OnSize();
 			break;
@@ -72,7 +102,7 @@ bool COverlappedWindow::Create(HINSTANCE instance) {
 void COverlappedWindow::OnCreate(HWND handle) {
 	RECT rect;
 	::GetClientRect(handle, &rect);
-	painter.Init(handle);
+	painter.Init(handle, hInst);
 }
 
 void COverlappedWindow::OnSize() {
@@ -80,7 +110,7 @@ void COverlappedWindow::OnSize() {
 	RECT rect;
 	::GetClientRect(handle, &rect);
 	
-	painter.OnSize();
+	painter.OnSize(); // есть гипотетическая возможность менять размеры, но по смыслу менять размеры запрещено
 
 	::ReleaseDC(handle, hDC);
 	DeleteObject(hDC);

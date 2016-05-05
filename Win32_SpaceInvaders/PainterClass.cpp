@@ -1,11 +1,15 @@
 #include "PainterClass.h"
+#include "resource.h"
 #include <Windows.h>
 
-void PainterClass::Init(HWND _handle) {
+void PainterClass::Init(HWND _handle, HINSTANCE hInst) {
 	handle = _handle;
+	hInstance = hInst;
 	curTime = 0;
 
 	InitMatrix();
+	InitShip();
+	InitBullet();
 }
 
 void PainterClass::SetWidth(int newWidth) {
@@ -26,6 +30,28 @@ void PainterClass::SetRight(int newRight) {
 
 void PainterClass::SetTop(int newTop) {
 	matrixProp.top = newTop;
+}
+
+void PainterClass::SetLeftMove() {
+	ship.moveLeft = true;
+	ship.moveRight = false;
+	MoveShip();
+}
+
+void PainterClass::SetRightMove() {
+	ship.moveLeft = false;
+	ship.moveRight = true;
+	MoveShip();
+}
+
+void PainterClass::SetStopMove() {
+	ship.moveLeft = false;
+	ship.moveRight = false;
+}
+
+void PainterClass::SetShipShoot(bool status) {
+	bullet.onShoot = status;
+	MoveShipShoot();
 }
 
 void PainterClass::InitMatrix() {
@@ -73,6 +99,23 @@ void PainterClass::InitMatrix() {
 	unitProp.unitWidth = matrixProp.hWidth;
 	unitProp.unitHeight = matrixProp.hHeight;
 	matrixProp.maxTime = 50;
+}
+
+void PainterClass::InitShip() {
+	ship.x = (int)((double)(width) / 2);
+	ship.width = (int)(0.06*(double)(width));
+	ship.y = (int)(0.9*(double)(height));
+	ship.height = (int)(0.1*(double)(height));
+	ship.speed = (int)(0.15*(double)(ship.width));
+}
+
+void PainterClass::InitBullet() {
+	bullet.x = ship.x + (ship.width - bullet.width) / 2;
+	bullet.y = ship.y - bullet.height;
+	bullet.width = 5;
+	bullet.height = 10;
+	bullet.speed = (int)(0.6*(double)(ship.speed));
+	bullet.onShoot = false;
 }
 
 void PainterClass::OnSize() {
@@ -128,7 +171,6 @@ void PainterClass::OnSize() {
 	unitProp.unitHeight = matrixProp.hHeight;
 }
 
-
 void PainterClass::Draw() {
 	PAINTSTRUCT ps;
 	HDC dc = ::BeginPaint(handle, &ps);
@@ -138,6 +180,9 @@ void PainterClass::Draw() {
 	HGDIOBJ oldBitmap = ::SelectObject(memDC, memBitmap);
 
 	DrawMatrix(memDC);
+	DrawShip(memDC);
+	DrawShipBullet(memDC);
+//	DrawShipBitmap(dc, memDC);
 
 	::DeleteObject(memBitmap);
 	::DeleteObject(oldBitmap);
@@ -154,7 +199,6 @@ void PainterClass::DrawTestUnit(HDC memDC, int xPos, int yPos) {
 
 	::SelectObject(memDC, mybrush);
 	::Ellipse(memDC, xPos, yPos, xPos + unitProp.unitWidth, yPos + unitProp.unitHeight);
-
 	::DeleteObject(mybrush);
 }
 
@@ -185,7 +229,66 @@ void PainterClass::MoveMatrix() {
 	}
 }
 
+void PainterClass::MoveShip() {
+	if (ship.moveLeft) {
+		if (ship.x > 0.3*ship.width) {
+			ship.x -= ship.speed;
+		}
+	}
+	if (ship.moveRight) {
+		if (ship.x < width - 1.3*ship.width) {
+			ship.x += ship.speed;
+		}
+	}
+	if (!bullet.onShoot) {
+		MoveShipShoot();
+	}
+	Draw();
+}
+
+void PainterClass::MoveShipShoot() {
+	if (bullet.onShoot) {
+		bullet.y -= bullet.speed;
+		if (bullet.y < 0) {
+			bullet.onShoot = false;
+		}
+	} 
+	if(!bullet.onShoot) {
+		bullet.x = ship.x + (ship.width - bullet.width) / 2;
+		bullet.y = ship.y - bullet.height;
+	}
+}
+
 void PainterClass::OnTime() {
 	matrixProp.curTime++;
 	curTime++;
+}
+
+void PainterClass::DrawShip(HDC memDC) {
+	int r = rand() % 256; int g = rand() % 256; int b = rand() % 256;
+	HBRUSH mybrush = ::CreateSolidBrush(RGB(r, g, b));
+
+	::SelectObject(memDC, mybrush);
+	::Ellipse(memDC, ship.x, ship.y, ship.x + ship.width, ship.y + ship.height);
+	::DeleteObject(mybrush);
+}
+
+void PainterClass::DrawShipBullet(HDC memDC) {
+	MoveShipShoot();
+	int r = rand() % 256; int g = rand() % 256; int b = rand() % 256;
+	HBRUSH mybrush = ::CreateSolidBrush(RGB(r, g, b));
+
+	::SelectObject(memDC, mybrush);
+	::Ellipse(memDC, bullet.x, bullet.y, bullet.x + bullet.width, bullet.y + bullet.height);
+	::DeleteObject(mybrush);
+}
+
+void PainterClass::DrawShipBitmap(HDC dc, HDC memDC) {
+	HINSTANCE hInst = GetModuleHandle(NULL);
+	int width = ship.width;
+	int height = ship.height;
+	HBITMAP hBitmap = (HBITMAP)LoadImage(hInst, L"ship.bmp", IMAGE_BITMAP, width, height, LR_LOADFROMFILE);
+	SelectObject(memDC, hBitmap);
+
+	::BitBlt(dc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
 }

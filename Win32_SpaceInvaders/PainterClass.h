@@ -41,24 +41,68 @@ struct MatrixProperties {
 	int matrixMove;
 };
 
+struct Ship {
+	int x;
+	int y;
+	int speed;
+	int width;
+	int height;
+	bool moveLeft;
+	bool moveRight;
+	Ship() : x(0), y(0), speed(0), width(0), height(0), moveLeft(false), moveRight(false) {};
+	Ship(int newX, int newY, int newSpeed, int newWidth, int newHeight) :
+		x(newX), y(newY), speed(newSpeed), width(newWidth), height(newHeight), moveLeft(false), moveRight(false) {};
+};
+
+struct Bullet {
+	int x;
+	int y;
+	int speed;
+	int width;
+	int height;
+	bool onShoot;
+	Bullet() : x(0), y(0), speed(0), width(0), height(0), onShoot(false) {};
+	Bullet(int xPos, int yPos, int newSpeed, int newWidth, int newHeight, bool flag) :
+		x(xPos), y(yPos), speed(newSpeed), width(newWidth), height(newHeight), onShoot(flag) {};
+};
+
 class PainterClass {
 public:
-	void Init(HWND handle);
-	void Draw();
-	void DrawTestUnit(HDC memDC, int xPos, int yPos);
+	void Init(HWND handle, HINSTANCE hInst);
+	void InitMatrix();
+	void InitShip();
+	void InitBullet();
+
 	void SetWidth(int newWidth);
 	void SetHeight(int newHeight);
 	void SetLeft(int newLeft);
 	void SetRight(int newRight);
 	void SetTop(int newTop);
-	void InitMatrix();
-	void DrawMatrix(HDC memDC);
-	void MoveMatrix();
+	void SetLeftMove();
+	void SetRightMove();
+	void SetStopMove();
+	void SetShipShoot(bool status);
+
 	void OnTime();
 	void OnSize();
 
+	void Draw();
+	void DrawMatrix(HDC memDC);
+	void DrawTestUnit(HDC memDC, int xPos, int yPos);
+	void DrawShip(HDC memDC);
+	void DrawShipBitmap(HDC dc, HDC memDC);
+	void DrawShipBullet(HDC memDC);
+//	void DrawInvader1(HDC memDC);
+//	void DrawInvader2(HDC memDC);
+
+	void MoveMatrix();
+	void MoveShip();
+	void MoveShipShoot();
+
+
 private:
 	HWND handle;
+	HINSTANCE hInstance;
 
 	int width;					// свойства клиентской области игры
 	int height;					// свойства клиентской области игры
@@ -66,6 +110,9 @@ private:
 	int curTime;
 
 	MatrixProperties matrixProp;
+
+	Ship ship;
+	Bullet bullet;
 
 	UnitProperties unitProp;	// здесь храним свойства злых инвейдеров 
 								// т.к. они одинаковые и их много
