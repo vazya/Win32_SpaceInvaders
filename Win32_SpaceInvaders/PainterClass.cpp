@@ -35,13 +35,13 @@ void PainterClass::SetTop(int newTop) {
 void PainterClass::SetLeftMove() {
 	ship.moveLeft = true;
 	ship.moveRight = false;
-	MoveShip();
+//	MoveShip();
 }
 
 void PainterClass::SetRightMove() {
 	ship.moveLeft = false;
 	ship.moveRight = true;
-	MoveShip();
+//	MoveShip();
 }
 
 void PainterClass::SetStopMove() {
@@ -106,15 +106,15 @@ void PainterClass::InitShip() {
 	ship.width = (int)(0.06*(double)(width));
 	ship.y = (int)(0.9*(double)(height));
 	ship.height = (int)(0.1*(double)(height));
-	ship.speed = (int)(0.15*(double)(ship.width));
+	ship.speed = (int)(0.062*(double)(ship.width));
 }
 
 void PainterClass::InitBullet() {
 	bullet.x = ship.x + (ship.width - bullet.width) / 2;
 	bullet.y = ship.y - bullet.height;
 	bullet.width = 5;
-	bullet.height = 10;
-	bullet.speed = (int)(0.6*(double)(ship.speed));
+	bullet.height = 18;
+	bullet.speed = (int)(2*(double)(ship.speed));
 	bullet.onShoot = false;
 }
 
@@ -243,7 +243,6 @@ void PainterClass::MoveShip() {
 	if (!bullet.onShoot) {
 		MoveShipShoot();
 	}
-	Draw();
 }
 
 void PainterClass::MoveShipShoot() {
@@ -257,6 +256,32 @@ void PainterClass::MoveShipShoot() {
 		bullet.x = ship.x + (ship.width - bullet.width) / 2;
 		bullet.y = ship.y - bullet.height;
 	}
+	CheckDeath();
+}
+
+void PainterClass::CheckDeath() {
+	int m = v.size();										// количество строк
+	int n = v[0].size();									// количество столбцов
+
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			int bulletLeft = bullet.x;
+			int bulletTop = bullet.y;
+			int bulletRight = bullet.x + bullet.width;
+			int bulletBot = bullet.y + bullet.height;
+			int bulletCentrX = (bulletLeft + bulletRight) / 2;
+			int bulletCentrY = (bulletTop + bulletBot) / 2;
+
+			if (v[i][j].status == 1) {
+				if (bulletTop >= matrixProp.top + v[i][j].yPos && bulletTop <= matrixProp.top + v[i][j].yPos + unitProp.unitHeight) {
+					if (bulletCentrX >= matrixProp.left + v[i][j].xPos && bulletCentrX < matrixProp.left + v[i][j].xPos + unitProp.unitWidth) {
+						v[i][j].status = 0;
+						SetShipShoot(false);
+					}
+				}
+			}
+		}
+	}
 }
 
 void PainterClass::OnTime() {
@@ -265,6 +290,7 @@ void PainterClass::OnTime() {
 }
 
 void PainterClass::DrawShip(HDC memDC) {
+	MoveShip();
 	int r = rand() % 256; int g = rand() % 256; int b = rand() % 256;
 	HBRUSH mybrush = ::CreateSolidBrush(RGB(r, g, b));
 

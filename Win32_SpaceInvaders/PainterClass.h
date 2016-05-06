@@ -99,6 +99,7 @@ public:
 	void MoveShip();
 	void MoveShipShoot();
 
+	void CheckDeath();
 
 private:
 	HWND handle;
