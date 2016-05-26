@@ -48,14 +48,8 @@ void PainterClass::SetStopMove() {
 }
 
 void PainterClass::SetShipShoot(bool status) {
-//	bool leftMove = ship.moveLeft;
-//	bool rightMove = ship.moveRight;
-//	ship.moveLeft = false;
-//	ship.moveRight = false;
 	bullet.onShoot = status;
 	MoveShipShoot();
-//	ship.moveLeft = leftMove;
-//	ship.moveRight = rightMove;
 }
 
 void PainterClass::InitMatrix() {
@@ -88,38 +82,27 @@ void PainterClass::InitMatrix() {
 
 	matrixProp.top = matrixProp.topShift = top + (int)(0.1*(double)(height));
 	matrixProp.botShift = top + (int)(0.5*(double)(height));
-//	int hHeight = matrixProp.hHeight = int((double)(matrixProp.botShift - matrixProp.topShift) / (2 * m));
 	int hHeight = matrixProp.hHeight = bitmapInvader.bmHeight;
 
 	matrixProp.leftShift = left + (int)(0.1*(double)(width));
 	matrixProp.rightShift = left + (int)(1.01*(double)(width));
-//	matrixProp.rightShift = left + (int)(0.95*(double)(width));
+
 	int length = matrixProp.length = (int)(0.7*(double)(matrixProp.rightShift - matrixProp.leftShift));
 
 	matrixProp.left = matrixProp.leftShift + (int)(0.2*(double)(length));
 	matrixProp.right = matrixProp.left + length;
-//	int hWidth = matrixProp.hWidth = int((double)(length) / (2 * n));
+
 	int hWidth = matrixProp.hWidth = bitmapInvader.bmWidth;
 	int matrixMove = matrixProp.matrixMove = (int)(0.75*(double)(matrixProp.hWidth));
 
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
-//			v[i][j] = Unit(j*(hWidth + matrixMove),2*i*hHeight, 1);
+
 			v[i][j] = Unit(j*unitProp.unitWidth, 2*i*unitProp.unitHeight, 1);
 		}
 	}
-
-//	unitProp.unitWidth = matrixProp.hWidth;
-//	unitProp.unitHeight = matrixProp.hHeight;
 	matrixProp.maxTime = 50;
-/*
-	HINSTANCE hInst = GetModuleHandle(NULL);
-	hBitmapInvader = (HBITMAP)LoadImage(hInst, L"invader.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	BitmapInvader;
-	GetObject(hBitmapInvader, sizeof(BITMAP), &BitmapInvader);//Получение информации о битмэпе
-	unitProp.unitWidth = BitmapInvader.bmWidth;
-	unitProp.unitHeight = BitmapInvader.bmHeight;
-*/
+
 }
 
 void PainterClass::InitShip() {
@@ -128,10 +111,8 @@ void PainterClass::InitShip() {
 	GetObject(hBitmapShip, sizeof(BITMAP), &bitmapShip);//Получение информации о битмэпе
 
 	ship.x = (int)((double)(width) / 2);
-//	ship.width = (int)(0.06*(double)(width));
 	ship.width = bitmapShip.bmWidth;
 	ship.y = (int)(0.9*(double)(height));
-//	ship.height = (int)(0.1*(double)(height));
 	ship.height = bitmapShip.bmHeight;
 	ship.speed = (int)(0.062*(double)(ship.width));
 }
@@ -199,77 +180,6 @@ void PainterClass::OnSize() {
 }
 
 void PainterClass::Draw() {
-/*
-	PAINTSTRUCT ps;
-	HDC dc = ::BeginPaint(handle, &ps);
-	HDC memDC = ::CreateCompatibleDC(dc);
-
-	HBITMAP memBitmap = ::CreateCompatibleBitmap(dc, width, height);
-	HGDIOBJ oldBitmap = ::SelectObject(memDC, memBitmap);
-
-//	DrawMatrix(memDC);
-//	DrawShipBullet(memDC);
-////////	DrawShipBitmap2(dc, memDC);
-//	SelectObject(memDC, memBitmap);
-//	::BitBlt(dc, 0, 0, width, height, memDC, 0, 0, PATCOPY);
-	HANDLE hOldBitmap1 = SelectObject(memDC, hBitmapInvader);
-	MoveMatrix();
-	for (int i = 0; i < v.size(); i++) {
-		for (int j = 0; j < v[i].size(); j++) {
-			if (v[i][j].status == 1) {
-				StretchBlt(dc, matrixProp.left + v[i][j].xPos, matrixProp.top + v[i][j].yPos, 
-					unitProp.unitWidth, unitProp.unitHeight, memDC, 0, 0,
-					BitmapInvader.bmWidth, BitmapInvader.bmHeight, SRCCOPY);
-			}
-		}
-	}
-	SelectObject(memDC, hOldBitmap1);
-	MoveShip();
-	HANDLE hOldBitmap = SelectObject(memDC, hBitmap);
-	StretchBlt(dc,ship.x,ship.y,ship.width,ship.height,memDC,0, 0,
-		Bitmap.bmWidth,Bitmap.bmHeight, SRCCOPY);
-//	StretchBlt(dc, 1.5*ship.x, ship.y, ship.width, ship.height, memDC, 0, 0,
-//		Bitmap.bmWidth, Bitmap.bmHeight, SRCCOPY);
-	SelectObject(memDC, memBitmap);
-//	DrawMatrix(memDC);
-//	DrawShipBullet(memDC);
-//	SelectObject(memDC, hOldBitmap);
-//	DrawMatrix(memDC);
-//	DrawShipBullet(memDC);
-	::BitBlt(dc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
-
-
-	::DeleteObject(memBitmap);
-	::DeleteObject(oldBitmap);
-	::DeleteDC(dc);
-	::DeleteDC(memDC);
-
-	EndPaint(handle, &ps);
-//*/
-/*
-	PAINTSTRUCT ps;
-	HDC dc = ::BeginPaint(handle, &ps);
-	HDC memDC = ::CreateCompatibleDC(dc);
-	HDC hCompatibleDC = ::CreateCompatibleDC(memDC);
-
-	HBITMAP memBitmap = ::CreateCompatibleBitmap(dc, width, height);
-	HGDIOBJ oldBitmap = ::SelectObject(memDC, memBitmap);
-
-
-	MoveShip();
-	HANDLE hOldBitmap = SelectObject(memDC, hBitmap);
-	StretchBlt(dc, ship.x, ship.y, ship.width, ship.height, memDC, 0, 0,
-		Bitmap.bmWidth, Bitmap.bmHeight, SRCCOPY);
-	StretchBlt(dc, 1.5*ship.x, ship.y, ship.width, ship.height, memDC, 0, 0,
-		Bitmap.bmWidth, Bitmap.bmHeight, SRCCOPY);
-	SelectObject(memDC, oldBitmap);
-	::DeleteObject(memBitmap);
-
-	::DeleteDC(memDC);
-	::DeleteDC(dc);
-
-	EndPaint(handle, &ps);
-*/
 
 	PAINTSTRUCT ps;
 	HDC hdc = BeginPaint(handle, &ps);
