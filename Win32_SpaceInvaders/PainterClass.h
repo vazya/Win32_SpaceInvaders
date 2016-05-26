@@ -90,10 +90,13 @@ public:
 	void DrawMatrix(HDC memDC);
 	void DrawTestUnit(HDC memDC, int xPos, int yPos);
 	void DrawShip(HDC memDC);
-	void DrawShipBitmap(HDC dc, HDC memDC);
+	void DrawShipBitmap(HDC dc, HDC memDC, HBITMAP hBitmap);
+	void DrawShipBitmap2(HDC hDC, HDC hCompatibleDC);
 	void DrawShipBullet(HDC memDC);
 //	void DrawInvader1(HDC memDC);
 //	void DrawInvader2(HDC memDC);
+
+	void DrawBitmap(HDC hDC, int x, int y, HBITMAP hBtmp);
 
 	void MoveMatrix();
 	void MoveShip();
@@ -104,6 +107,12 @@ public:
 private:
 	HWND handle;
 	HINSTANCE hInstance;
+	HBITMAP hBitmapShip;
+	HBITMAP hBitmapInvader;
+	HBITMAP hBitmapBullet;
+	BITMAP bitmapShip;
+	BITMAP bitmapInvader;
+	BITMAP bitmapBullet;
 
 	int width;					// свойства клиентской области игры
 	int height;					// свойства клиентской области игры
