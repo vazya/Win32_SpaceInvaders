@@ -279,9 +279,6 @@ void PainterClass::Draw() {
 	HBITMAP memBitmap = ::CreateCompatibleBitmap(hdc, width, height);
 	HBITMAP hbmOld = reinterpret_cast<HBITMAP>(SelectObject(hdcMem, memBitmap));
 
-	//	HBITMAP hbmOld = reinterpret_cast<HBITMAP>(SelectObject(hdcMem, hBtmp));
-
-
 	RECT rect;
 	GetClientRect(handle, &rect);
 	HBRUSH brush = (HBRUSH)CreateSolidBrush(RGB(0, 0, 0));
@@ -383,16 +380,16 @@ void PainterClass::CheckDeath() {
 
 	for (int i = 0; i < m; i++) {
 		for (int j = 0; j < n; j++) {
-			int bulletLeft = bullet.x;
+			int bulletLeft = bullet.x + 1;
 			int bulletTop = bullet.y;
 			int bulletRight = bullet.x + bullet.width;
-			int bulletBot = bullet.y + bullet.height;
+			int bulletBot = bullet.y + bullet.height + 1;
 			int bulletCentrX = (bulletLeft + bulletRight) / 2;
 			int bulletCentrY = (bulletTop + bulletBot) / 2;
 
 			if (v[i][j].status == 1) {
-				if (bulletTop >= matrixProp.top + v[i][j].yPos && bulletTop <= matrixProp.top + v[i][j].yPos + unitProp.unitHeight) {
-					if (bulletCentrX >= matrixProp.left + v[i][j].xPos && bulletCentrX < matrixProp.left + v[i][j].xPos + unitProp.unitWidth) {
+				if (bulletTop >= matrixProp.top + 1.1*v[i][j].yPos && bulletTop <= matrixProp.top + 1.1*v[i][j].yPos + unitProp.unitHeight) {
+					if ((bulletCentrX >= matrixProp.left + v[i][j].xPos + 10) && (bulletCentrX < matrixProp.left + v[i][j].xPos + 2*unitProp.unitWidth - 8)) {
 						v[i][j].status = 0;
 						SetShipShoot(false);
 					}
@@ -425,37 +422,6 @@ void PainterClass::DrawShipBullet(HDC memDC) {
 	::SelectObject(memDC, mybrush);
 	::Ellipse(memDC, bullet.x + 1, bullet.y, bullet.x + bullet.width, bullet.y + bullet.height + 1);
 	::DeleteObject(mybrush);
-}
-
-void PainterClass::DrawShipBitmap(HDC dc, HDC memDC, HBITMAP hBitmap) {
-	HINSTANCE hInst = GetModuleHandle(NULL);
-	int shipWidth = ship.width;
-	int shipHeight = ship.height;
-	hBitmap = (HBITMAP)LoadImage(hInst, L"ship.bmp", IMAGE_BITMAP, shipWidth, shipHeight, LR_LOADFROMFILE);
-	SelectObject(memDC, hBitmap);
-
-	::BitBlt(dc, 0, 0, shipWidth, shipHeight, memDC, 0, 0, SRCCOPY);
-}
-
-void PainterClass::DrawShipBitmap2(HDC hDC, HDC hCompatibleDC) {
-	MoveShip();
-	HANDLE hOldBitmap = SelectObject(hCompatibleDC/*Хендл совместимого контекста, в котором размещается текущий элемент*/,
-		hBitmapShip/*Хендл элемента, которым замещается текущий элемент*/);//Функция, возвращающая хендл замещённого элемента
-
-	StretchBlt(
-		hDC/*Хендл окна*/,
-		ship.x/*Смещение по оси x*/,
-		ship.y/*Смещение по оси y*/,
-		ship.width/*Ширина прямоугольника*/,
-		ship.height/*Высота прямоугольника*/,
-		hCompatibleDC/*Хендл совместимого контекста*/,
-		0, 0,
-		bitmapShip.bmWidth/*Ширина отображаемой части*/,
-		bitmapShip.bmHeight/*Высота отображаемой части*/,
-		SRCCOPY);
-
-	SelectObject(hCompatibleDC, hOldBitmap);
-	BitBlt(hDC, 0, 0, width, height, hCompatibleDC, 0, 0, SRCCOPY);
 }
 
 void PainterClass::DrawBitmap(HDC hDC, int x, int y, HBITMAP hBtmp) {
